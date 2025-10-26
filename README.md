@@ -4,15 +4,10 @@
 A simple and elegant mini e-learning platform for **500-level Electrical Engineering** students.  
 Built with **HTML, CSS, and JavaScript**, this project provides a Coursera-inspired interface (without branding) featuring light/dark modes, course progress tracking, and completion marking.
 
----
 
 ## 🌐 Live Demo
 
 👉 **[View Website](https://dydx001.github.io/Vibe-Coding-WK-1/)**
-
-> *(Replace the above link with your actual GitHub Pages or hosting link once deployed.)*
-
----
 
 ## 🧠 Features
 
@@ -22,7 +17,6 @@ Built with **HTML, CSS, and JavaScript**, this project provides a Coursera-inspi
 - 💾 **Progress Persistence:** Uses `localStorage` to save course completion.  
 - 🎨 **Clean UI:** Inspired by Coursera with smooth hover effects and simple, readable design.
 
----
 
 ## 📚 Included Courses
 
@@ -34,7 +28,6 @@ Built with **HTML, CSS, and JavaScript**, this project provides a Coursera-inspi
 6. Engineering Law 
 7. Industrial Electronics 
 8. Digital Signal Processing 
----
 
 ## 🛠️ Tech Stack
 
