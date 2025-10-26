@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EE 500L Learning Platform</title>
+<style>
+  :root {
+    --bg: #f9fafc;
+    --text: #1e1e1e;
+    --card: #fff;
+    --accent: #0066ff;
+    --muted: #e0e6ed;
+    --hover: #f0f3f8;
+    --shadow: rgba(0,0,0,0.1);
+  }
+  body.dark {
+    --bg: #121212;
+    --text: #e6e6e6;
+    --card: #1e1e1e;
+    --accent: #3b82f6;
+    --muted: #2a2a2a;
+    --hover: #242424;
+    --shadow: rgba(255,255,255,0.07);
+  }
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    box-shadow: 0 2px 6px var(--shadow);
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 {
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin: 0;
+  }
+  .theme-toggle {
+    background: var(--muted);
+    border: none;
+    border-radius: 20px;
+    padding: 7px 15px;
+    cursor: pointer;
+    color: var(--text);
+    transition: 0.3s;
+  }
+  .theme-toggle:hover { background: var(--hover); }
+  .container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto;
+  }
+  .login-box {
+    background: var(--card);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
+    max-width: 400px;
+    margin: 100px auto;
+    text-align: center;
+  }
+  input {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid var(--muted);
+    border-radius: 6px;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { opacity: 0.9; }
+  .course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 3px 10px var(--shadow);
+    padding: 20px;
+    transition: 0.25s;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px var(--shadow);
+  }
+  .card h3 { color: var(--accent); }
+  .course-detail {
+    display: none;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 3px 12px var(--shadow);
+    padding: 25px;
+  }
+  .lesson {
+    background: var(--hover);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 10px 0;
+  }
+  .progress {
+    margin-top: 15px;
+    background: var(--muted);
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: var(--accent);
+    height: 100%;
+    width: 0%;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .actions { margin-top: 20px; }
+  .btn-secondary {
+    background: var(--muted);
+    color: var(--text);
+    margin-left: 8px;
+  }
+  .btn-secondary:hover { background: var(--hover); }
+</style>
+</head>
+<body>
+<header>
+  <h1>EE 500L Learning Platform</h1>
+  <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+</header>
+
+<div id="loginPage" class="login-box">
+  <h2>Welcome Back</h2>
+  <p>Sign in to access your courses</p>
+  <input type="text" id="nameInput" placeholder="Full Name" /><br>
+  <input type="email" id="emailInput" placeholder="Email Address" /><br>
+  <button id="loginBtn">Login</button>
+</div>
+
+<div class="container" id="dashboard" style="display:none;">
+  <h2 id="welcomeUser"></h2>
+  <h3>Available Courses</h3>
+  <div class="course-list" id="courseList"></div>
+</div>
+
+<div class="container">
+  <div class="course-detail" id="courseDetail">
+    <h2 id="courseTitle"></h2>
+    <div id="lessonList"></div>
+    <div class="progress">
+      <div class="progress-bar" id="progressBar">0%</div>
+    </div>
+    <div class="actions">
+      <button id="completeBtn">Mark as Completed</button>
+      <button class="btn-secondary" id="backBtn">Back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const courses = [
+  {id:1,title:"EEE501 - Power System Analysis",lessons:["Power Flow Studies","Fault Analysis","Stability","Load Modeling"]},
+  {id:2,title:"EEE502 - Control Systems",lessons:["Modeling","Transfer Functions","Root Locus","PID Design"]},
+  {id:3,title:"EEE503 - Electrical Machines III",lessons:["Synchronous Machines","Induction Motors","Tests","Speed Control"]},
+  {id:4,title:"EEE504 - Power Electronics",lessons:["Rectifiers","Inverters","Converters","Choppers"]},
+  {id:5,title:"EEE505 - Instrumentation & Measurements",lessons:["Sensors","Bridge Circuits","Digital Instruments","Error Analysis"]},
+  {id:6,title:"EEE506 - Engineering Law & Ethics",lessons:["Contracts","Liabilities","Professional Ethics","IP Rights"]},
+  {id:7,title:"EEE507 - Industrial Electronics",lessons:["AC Drives","PLC Basics","Control Circuits","Converters"]},
+  {id:8,title:"EEE508 - Digital Signal Processing",lessons:["Discrete-Time Signals","Transforms","Filtering","DSP Applications"]}
+];
+
+const loginPage = document.getElementById('loginPage');
+const dashboard = document.getElementById('dashboard');
+const welcomeUser = document.getElementById('welcomeUser');
+const courseList = document.getElementById('courseList');
+const courseDetail = document.getElementById('courseDetail');
+const courseTitle = document.getElementById('courseTitle');
+const lessonList = document.getElementById('lessonList');
+const progressBar = document.getElementById('progressBar');
+const completeBtn = document.getElementById('completeBtn');
+const backBtn = document.getElementById('backBtn');
+const themeToggle = document.getElementById('themeToggle');
+const loginBtn = document.getElementById('loginBtn');
+let currentCourse = null;
+let completed = JSON.parse(localStorage.getItem('completedCourses'))||[];
+let user = JSON.parse(localStorage.getItem('user'));
+let dark = localStorage.getItem('theme')==='dark';
+
+// Theme toggle
+function setTheme(){
+  document.body.classList.toggle('dark',dark);
+  themeToggle.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+}
+themeToggle.onclick=()=>{dark=!dark;localStorage.setItem('theme',dark?'dark':'light');setTheme();};
+setTheme();
+
+// Login flow
+function showDashboard(){
+  loginPage.style.display='none';
+  dashboard.style.display='block';
+  welcomeUser.textContent=`Welcome, ${user.name}`;
+  displayCourses();
+}
+if(user){showDashboard();}
+
+loginBtn.onclick=()=>{
+  const name=document.getElementById('nameInput').value.trim();
+  const email=document.getElementById('emailInput').value.trim();
+  if(!name||!email){alert('Please enter your name and email');return;}
+  user={name,email};
+  localStorage.setItem('user',JSON.stringify(user));
+  showDashboard();
+};
+
+// Display course cards
+function displayCourses(){
+  courseList.innerHTML='';
+  courses.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='card';
+    const enrolled = completed.includes(c.id);
+    div.innerHTML=`
+      <h3>${c.title}</h3>
+      <p>${c.lessons.length} Lessons</p>
+      <p style="color:${enrolled?'green':'gray'}">${enrolled?'✅ Completed':'Not Completed'}</p>
+      <button style="margin-top:10px" onclick="showCourseDetail(${c.id})">View Course</button>`;
+    courseList.appendChild(div);
+  });
+}
+
+// Course detail view
+function showCourseDetail(id){
+  currentCourse=courses.find(c=>c.id===id);
+  dashboard.style.display='none';
+  courseDetail.style.display='block';
+  courseTitle.textContent=currentCourse.title;
+  lessonList.innerHTML=currentCourse.lessons.map(l=>`<div class='lesson'>${l}</div>`).join('');
+  const done=completed.includes(currentCourse.id);
+  if(done){
+    progressBar.style.width='100%';
+    progressBar.textContent='100% Completed';
+    completeBtn.disabled=true;
+  }else{
+    progressBar.style.width='0%';
+    progressBar.textContent='0%';
+    completeBtn.disabled=false;
+  }
+}
+
+// Mark course completed
+completeBtn.onclick=()=>{
+  completed.push(currentCourse.id);
+  localStorage.setItem('completedCourses',JSON.stringify(completed));
+  progressBar.style.width='100%';
+  progressBar.textContent='100% Completed';
+  completeBtn.disabled=true;
+  displayCourses();
+};
+
+// Back button
+backBtn.onclick=()=>{
+  courseDetail.style.display='none';
+  dashboard.style.display='block';
+};
+</script>
+</body>
+</html>
